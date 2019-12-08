@@ -20,7 +20,7 @@ Go to [Snapy.io](https://snapy.io) and create an account.  You will need to keep
 
 Official documentation here: [https://snapy.io/docs#createwallet](https://snapy.io/docs#createwallet)
 
-Substitute your key and choose a strong password, then run this command: `curl https://snapy.io/api/v1/wallets -H "x-api-key: <pub_snapy-key>" -H "Content-Type: application/json" -d '{"password":"wallet_password"}'`
+Substitute your key and choose a strong password, then run this command: `curl https://snapy.io/api/v1/wallets -H "x-api-key: <pub_snapy-key>" -H "Content-Type: application/json" -d "{\"password\":\"wallet_password\"}"`
 
 ### Step 4. Generate a Nano address
 
@@ -36,7 +36,7 @@ In routes/blocks.js, set the appropriate values to the variables `wallet_pass` a
 
 Official documentation here: [https://snapy.io/docs#webhooks](https://snapy.io/docs#webhooks)
 
-Substitute your key, then run this command: `curl https://snapy.io/api/v1/webhooks/address -H "x-api-key: <pub_snapy-key>" -H "Content-Type: application/json" -d '{"address":"xrb_1youraccount", "url": "https://your-heroku-app-name.herokuapp.com/new_block", "confirmations": 1}' -X POST`
+Substitute your key, then run this command: `curl https://snapy.io/api/v1/webhooks/address -H "x-api-key: <pub_snapy-key>" -H "Content-Type: application/json" -d "{\"address\":\"xrb_1youraccount\", \"url\": \"https://your-heroku-app-name.herokuapp.com/new_block\", \"confirmations\": 1}" -X POST`
 
 ### Step 7. Run your app
 
@@ -44,7 +44,7 @@ I like using [Heroku](https://heroku.com) to test Node.js apps.
 
 #### Step 7a. Create a Heroku account and app
 
-Visit [https://heroku.com](https://heroku.com) and create your account.  Create an app and download the heroku client.  Then you can run `heroku login` in your console to be fulling authenticated with your Heroku account.
+Visit [https://heroku.com](https://heroku.com) and create your account.  Create an app and download the heroku client.  Then you can run `heroku login` in your console to be fully authenticated with your Heroku account.
 
 #### Step 7b. Push your app to Heroku
 
