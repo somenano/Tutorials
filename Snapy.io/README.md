@@ -1,3 +1,7 @@
+| :warning: CAUTION          |
+|:---------------------------|
+| The Snapy.io API still exists, however, I have heard MANY people complain about its availability and lack of support. As of January 2021 I no longer use Snapy.io in any of my projects and I do not endorse its use. As with all crypto projects, make your own risk assessment to decide if you should build a dependency on someone else's project. That said, I am keeping this tutorial online.|
+
 # Snapy.io Node.js Demonstration
 
 This is a simple demonstration of how you can integrate [Snapy.io](https://snapy.io) into a Node.js app.  This demonstration will receive a [Nano](https://nano.org) transaction and then immediately send it back.  Nano has zero fees, so this demonstration can be run as often as you like.
