@@ -1,0 +1,143 @@
+<html>
+    <head>
+        <title>Nano Faucet</title>
+
+        <script src="https://cdn.jsdelivr.net/npm/nanocurrency/dist/nanocurrency.umd.js"></script>
+        <script>
+            function get_request(theUrl, callback, callback_error)
+            {
+                var xmlHttp = new XMLHttpRequest();
+                xmlHttp.onreadystatechange = function() { 
+                    if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                        callback(xmlHttp.responseText);
+                    if (xmlHttp.readyState == 4 && xmlHttp.status != 200)
+                        callback_error(xmlHttp);
+                }
+                xmlHttp.open("GET", theUrl, true);
+                xmlHttp.send(null);
+            }
+
+            function refresh_faucet_info() {
+                get_request('/info', function(text) {
+                    try {
+                        let data = JSON.parse(text);
+                        console.log(data);
+
+                        let address_href = '';
+                        if (data.faucet_address !== undefined) {
+                            let url = 'https://nanocrawler.cc/explorer/account/'+ data.faucet_address;
+                            address_href = '<a href="'+ url +'" target="_new">'+ data.faucet_address +'</a>';
+                        }
+                        
+                        let payout = data.faucet_payout;
+                        if (payout !== undefined) {
+                            payout = NanoCurrency.convert(String(payout), {
+                                from: 'raw',
+                                to: 'Nano',
+                            });
+                        }
+
+                        let balance = data.faucet_balance.balance;
+                        if (balance !== undefined) {
+                            balance = NanoCurrency.convert(String(balance), {
+                                from: 'raw',
+                                to: 'Nano',
+                            });
+                        }
+
+                        let pending = data.faucet_balance.pending;
+                        if (pending !== undefined) {
+                            pending = NanoCurrency.convert(String(pending), {
+                                from: 'raw',
+                                to: 'Nano',
+                            });
+                        }
+
+                        document.getElementById('faucet-address').innerHTML = address_href;
+                        document.getElementById('faucet-payout') .innerText = payout + ' Nano';
+                        document.getElementById('faucet-balance').innerText = balance + ' Nano';
+                        document.getElementById('faucet-pending').innerText = pending + ' Nano';
+                    } catch(e) {
+                        console.error('In refresh_faucet_info an error was caught. Response text: '+ text);
+                        console.error(e);
+                        document.getElementById('faucet-address').innerText = 'Error';
+                        document.getElementById('faucet-payout') .innerText = 'Error';
+                        document.getElementById('faucet-balance').innerText = 'Error';
+                        document.getElementById('faucet-pending').innerText = 'Error';
+                    }
+                }, function(xmlHttp) {
+                    refresh_faucet_info();
+
+                    console.error('In refresh_faucet_info GET REQUEST did not return successfuly. Status code: '+ xmlHttp.status);
+                    document.getElementById('payout-href').innerText = 'An error occured, check the console for more information.';
+                });
+            }
+            refresh_faucet_info();
+
+            function form_submit() {
+                let address = document.getElementById('address').value;
+                document.getElementById('payout-href').innerText = 'Payout requested, waiting for response...'
+                get_request('/submit?address='+ address, function(text) {
+                    try {
+                        refresh_faucet_info();
+
+                        let data = JSON.parse(text);
+                        console.log(data);
+
+                        let hash = data.block;
+                        if (hash !== undefined) {
+                            let url = 'https://nanocrawler.cc/explorer/block/'+ hash;
+                            let html = '<a href="'+ url +'" target="_new">'+ hash +'</a>';
+                            document.getElementById('payout-href').innerHTML = html;
+                        } else {
+                            throw 'Error parsing response';
+                        }
+                    } catch(e) {
+                        console.error('In form_submit an error was caught. Response text: '+ text);
+                        console.error(e);
+                        document.getElementById('payout-href').innerText = 'An error occured, check the console for more information.';
+                    }
+                }, function(xmlHttp) {
+                    refresh_faucet_info();
+
+                    console.error('In form_submit GET REQUEST did not return successfuly. Status code: '+ xmlHttp.status);
+                    document.getElementById('payout-href').innerText = 'An error occured, check the console for more information.';
+                });
+            }
+        </script>
+    </head>
+
+    <body>
+
+        <h2>Welcome to the Nano Faucet!</h2>
+
+        <p>
+            Faucet address: <span id="faucet-address">Loading...</span>
+        </p>
+        <p>
+            Faucet payout: <span id="faucet-payout">Loading...</span>
+        </p>
+        <p>
+            Faucet balance: <span id="faucet-balance">Loading...</span>
+        </p>
+        <p>
+            Faucet balance pending: <span id="faucet-pending">Loading...</span>
+        </p>
+        
+        <p>
+            <ol>
+                <li>Enter your Nano Address in the text box below.</li>
+                <li>Click the "Submit" to receive some Nano!</li>
+                <form action="javascript:form_submit();">
+                    <input type="text" id="address">
+                    <input type="submit">
+                </form>
+            </ol>
+        </p>
+
+        <p>
+            Your payout: <span id="payout-href">Follow above instructions to receive payout.</span>
+        </p>
+
+    </body>
+</html>
